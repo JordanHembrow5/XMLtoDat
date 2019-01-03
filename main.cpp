@@ -22,6 +22,7 @@
 #define DEFAULT_FILENAME (char*)"XML_files/test.xml"
 #define MAX_LINE_LEN 100
 #define METADATA_COUNT 7
+#define OUTPUT_FILE_EXTENSION (char*)".dat"
 
 
 enum cartesianCoords{
@@ -47,6 +48,7 @@ typedef struct profileData {
 void removeClosingTag(char* str);
 void obtainMetadata(FILE* input_file, profileMetadata *meta);
 void obtainData(FILE* input_file, std::vector<profileData> &data);
+char *outputFilename(const char *input_filename);
 void outputDat(char* output_file, profileMetadata *meta, const std::vector<profileData> &data);
 void XMLtoDat(const char* filenameXML);
 
@@ -150,6 +152,17 @@ void obtainData(FILE* input_file, std::vector<profileData> &data) {
     }
 }
 
+/* Convert the .xml filename to a .dat filename */
+char *outputFilename(const char *input_filename) {
+    char *output_filename = new char[MAX_LINE_LEN];
+    std::strcpy(output_filename, input_filename);
+
+    char* file_extension = strrchr(output_filename, '.');
+    file_extension[0] = '\0';
+    std::strcat(output_filename, OUTPUT_FILE_EXTENSION);
+    return output_filename;
+}
+
 /* Output the obtained data to a .dat formatted file */
 void outputDat(char* output_file, profileMetadata *meta, const std::vector<profileData> &data) {
     std::ofstream file;
@@ -165,6 +178,7 @@ void outputDat(char* output_file, profileMetadata *meta, const std::vector<profi
     for(auto ele : data) {
         file << ele.x << "\t" << ele.z << std::endl;
     }
+    file.close();
 }
 
 
@@ -185,6 +199,7 @@ void XMLtoDat(const char* filenameXML) {
     std::vector<profileData> data;
     data.resize((u_long)meta.data_points);
     obtainData(input_file, data);
+    std::fclose(input_file);
 
-    outputDat((char*)"testing_out.dat", &meta, data);
+    outputDat(outputFilename(filenameXML), &meta, data);
 }
