@@ -1,14 +1,32 @@
 /*
-    PLAN:
-        1) Grab Metadata
-            - Find the first < and the first > of each line (in metadata section)
-            - save the string between those two (metadata title[n])
-            - find the first > and the last <
-            - save the string between those two (metadata[n])
-        2) Add metadata to the top of the .dat file?
-            - for n=0->n, print '# metadata title[n]: metadata[n]'
-        3) Get x-z data
-            - like grabbing metadata or using atof or combo?
+    @date 03-01-19
+    @author Jordan Hembrow
+    @version 1.0
+ */
+
+/*
+    This program converts the unconventional XML file format produced by the profiler into a tab separated format (.dat)
+    This format preserves the data, its order and the metadata associated with it
+
+    The metadata is reported at the start of the file, in the lines beginning with '#'. This ensures it is not read by other programs (e.g. MatLab)
+    Using this with date from another profiler may be problematic as the general layout of the XML format is hardcoded in.
+
+    This program assumes all x and z values are paired (i.e. no NAs or NaNs) and will fail if this is not the case.
+
+    To run this program, call from the command line as follows:
+        ./XMLtoDat <XML file to convert>.xml
+ */
+
+/*
+    @input An XML file passed as a command line argument (including extension)
+    @output A tab separated (.dat) file with the same filename (not including extension) as the XML file passed as input
+    @return 0 on normal exit
+ */
+
+/*
+    Predefined Error Codes:
+        1 - Unable to find or open the file specified at the command line. Check it is in the working directory and that you have access.
+        2 - There is missing data for the x-z values (i.e. they are unpaired)
  */
 
 
@@ -24,10 +42,6 @@
 #define METADATA_COUNT 7
 #define OUTPUT_FILE_EXTENSION (char*)".dat"
 
-
-enum cartesianCoords{
-    X, Y, Z, N_COORDS
-};
 
 typedef struct profileMetadata {
     char date[MAX_LINE_LEN] = "\n";
@@ -203,3 +217,18 @@ void XMLtoDat(const char* filenameXML) {
 
     outputDat(outputFilename(filenameXML), &meta, data);
 }
+
+
+
+/*
+    PLAN:
+        1) Grab Metadata
+            - Find the first < and the first > of each line (in metadata section)
+            - save the string between those two (metadata title[n])
+            - find the first > and the last <
+            - save the string between those two (metadata[n])
+        2) Add metadata to the top of the .dat file?
+            - for n=0->n, print '# metadata title[n]: metadata[n]'
+        3) Get x-z data
+            - like grabbing metadata or using atof or combo?
+ */
