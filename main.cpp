@@ -38,7 +38,7 @@
 
 
 #define DEFAULT_FILENAME (char*)"XML_files/test.xml"
-#define MAX_LINE_LEN 100
+#define MAX_LINE_LEN 200
 #define METADATA_COUNT 7
 #define OUTPUT_FILE_EXTENSION (char*)".dat"
 
@@ -76,6 +76,13 @@ int main(int argc, char **argv) {
     }
 
     XMLtoDat(filenameXML);
+
+    char plot_call[MAX_LINE_LEN] = "python PlotMe.py ";
+    std::strcat(plot_call, outputFilename(filenameXML));
+    system(plot_call);
+
+    system(plot_call);
+
     return 0;
 }
 
@@ -217,18 +224,3 @@ void XMLtoDat(const char* filenameXML) {
 
     outputDat(outputFilename(filenameXML), &meta, data);
 }
-
-
-
-/*
-    PLAN:
-        1) Grab Metadata
-            - Find the first < and the first > of each line (in metadata section)
-            - save the string between those two (metadata title[n])
-            - find the first > and the last <
-            - save the string between those two (metadata[n])
-        2) Add metadata to the top of the .dat file?
-            - for n=0->n, print '# metadata title[n]: metadata[n]'
-        3) Get x-z data
-            - like grabbing metadata or using atof or combo?
- */
